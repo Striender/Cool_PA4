@@ -1,0 +1,30 @@
+class B extends A
+{
+
+    void <init>()
+    {
+        B r0;
+
+        r0 := @this: B;
+
+        specialinvoke r0.<A: void <init>()>();
+
+        return;
+    }
+
+    void foo()
+    {
+        A $r1;
+        B r0;
+
+        r0 := @this: B;
+
+        $r1 = new A;
+
+        specialinvoke $r1.<A: void <init>()>();
+
+        r0.<B: A f> = $r1;
+
+        return;
+    }
+}
