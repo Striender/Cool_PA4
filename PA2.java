@@ -27,6 +27,11 @@ public class PA2 {
         PackManager.v().getPack("wjtp")
                 .add(new Transform("wjtp.cfg_validator", cfgValidator));
 
+        // Add Dead Code Analysis
+        DeadCodeAnalysis dca = new DeadCodeAnalysis();
+        PackManager.v().getPack("wjtp")
+                .add(new Transform("wjtp.dead_code_analysis", dca));
+
         // Create transformer for analysis
         AnalysisTransformer analysisTransformer = new AnalysisTransformer();
 
