@@ -14,27 +14,60 @@ public class Test extends java.lang.Object
 
     public static void main(java.lang.String[])
     {
-        A $r1, r2, r3;
-        B $r0;
-        java.lang.String[] r4;
+        java.io.PrintStream $r5;
+        Node $r0, $r1, $r2, $r3, $r4, $r7, r9, r10, r11;
+        java.lang.String[] r8;
+        java.lang.String $r6;
 
-        r4 := @parameter0: java.lang.String[];
+        r8 := @parameter0: java.lang.String[];
 
-        $r0 = new B;
+        $r0 = new Node;
 
-        specialinvoke $r0.<B: void <init>()>();
+        specialinvoke $r0.<Node: void <init>()>();
 
-        $r1 = new A;
+        $r1 = new Node;
 
-        specialinvoke $r1.<A: void <init>()>();
+        specialinvoke $r1.<Node: void <init>()>();
 
-        $r0.<B: A f> = $r1;
+        $r2 = new Node;
 
-        r2 = $r0.<B: A f>;
+        specialinvoke $r2.<Node: void <init>()>();
 
-        virtualinvoke $r0.<B: void foo()>();
+        $r0.<Node: Node f1> = $r2;
 
-        r3 = $r0.<B: A f>;
+        $r3 = new Node;
+
+        specialinvoke $r3.<Node: void <init>()>();
+
+        r9 = $r3;
+
+        $r4 = new Node;
+
+        specialinvoke $r4.<Node: void <init>()>();
+
+        r10 = $r4;
+
+        if $r0 != $r1 goto label1;
+
+        r9 = $r0.<Node: Node f1>;
+
+        r11 = $r0.<Node: Node f1>;
+
+        goto label2;
+
+     label1:
+        r10 = $r0.<Node: Node f1>;
+
+        r11 = $r0.<Node: Node f1>;
+
+     label2:
+        $r7 = $r0.<Node: Node f1>;
+
+        $r5 = <java.lang.System: java.io.PrintStream err>;
+
+        $r6 = dynamicinvoke "makeConcatWithConstants" <java.lang.String (Node,Node,Node,Node,Node,Node)>($r0, $r1, r11, r9, r10, $r7) <java.lang.invoke.StringConcatFactory: java.lang.invoke.CallSite makeConcatWithConstants(java.lang.invoke.MethodHandles$Lookup,java.lang.String,java.lang.invoke.MethodType,java.lang.String,java.lang.Object[])>("Test completed: \u0001 \u0001 \u0001 \u0001 \u0001 \u0001");
+
+        virtualinvoke $r5.<java.io.PrintStream: void println(java.lang.String)>($r6);
 
         return;
     }

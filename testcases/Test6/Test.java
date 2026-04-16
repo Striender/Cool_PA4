@@ -1,20 +1,21 @@
-class A {
-    public A f1;
+class Node {
+    Node f1;
+    int f2;
 }
 
 public class Test {
     public static void main(String[] args) {
-        A a, b, x, y;
-        a = new A();
-        b = new A();
-
-        a.f1 = new A();
-        if(a == b) {
-            x = a.f1;
-        } else {
-            x = a.f1;
-        }
-
-        A z = a.f1;     // is this Redundant?
+        Node a = new Node();
+        a.f1 = new Node();
+        a.f1.f1 = new Node();
+        a.f1.f1.f1 = new Node();
+        a.f1.f1.f1.f1 = new Node();
+        a.f1.f1.f1.f1.f1 = new Node();
+        Node b;
+        b = a.f1; 
+        Node c;
+        c = a.f1.f1; // Partialy redundant
+        Node e = a.f1.f1; // Redundant
+        System.err.println("Test completed: "+ b + " " + c + " " + e);
     }
 }

@@ -1,6 +1,6 @@
-class A extends java.lang.Object
+class A extends B
 {
-    A f;
+    public A oA;
 
     void <init>()
     {
@@ -8,7 +8,7 @@ class A extends java.lang.Object
 
         r0 := @this: A;
 
-        specialinvoke r0.<java.lang.Object: void <init>()>();
+        specialinvoke r0.<B: void <init>()>();
 
         return;
     }

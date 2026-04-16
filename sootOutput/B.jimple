@@ -1,5 +1,6 @@
-class B extends A
+class B extends java.lang.Object
 {
+    public B oB;
 
     void <init>()
     {
@@ -7,23 +8,7 @@ class B extends A
 
         r0 := @this: B;
 
-        specialinvoke r0.<A: void <init>()>();
-
-        return;
-    }
-
-    void foo()
-    {
-        A $r1;
-        B r0;
-
-        r0 := @this: B;
-
-        $r1 = new A;
-
-        specialinvoke $r1.<A: void <init>()>();
-
-        r0.<B: A f> = $r1;
+        specialinvoke r0.<java.lang.Object: void <init>()>();
 
         return;
     }

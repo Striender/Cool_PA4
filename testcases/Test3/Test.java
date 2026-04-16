@@ -1,18 +1,21 @@
-class A {
-    public A f1;
+class Node {
+	Node f1;
+	Node g;
+	Node() {}
 }
 
 public class Test {
-    public static void main(String[] args) {
-        A a, b, x, y;
-        a = new A();
-        b = new A();
-        a.f1 = new A();
-        if(a == b) {
-            x = a.f1;
-        } else {
-            x = a.f1;
-        }
-        A z = a.f1;     // is this Redundant?
-    }
+	public static void main(String[] args) {
+		Node a = new Node(); 
+		Node b = new Node();
+		Node c = new Node();
+		a.f1 = new Node(); 
+		b.f1 = new Node();
+		c.f1 = new Node();
+		Node d = a.f1;
+		Node e = b.f1;
+		Node f = a.f1; // Redundant
+		Node g = c.f1;
+		System.err.println("Test completed: "+ d + " " + e + " " + f + " " + g);
+	}
 }

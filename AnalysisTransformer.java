@@ -154,6 +154,7 @@ public class AnalysisTransformer extends BodyTransformer {
             Map<Unit, State> OUT) {
 
         List<Unit> preds = cfg.getPredsOf(u);
+        
 
         if (preds.isEmpty())
             return new State();
@@ -377,18 +378,27 @@ public class AnalysisTransformer extends BodyTransformer {
     // =====================================================
     // REDUNDANCY CHECK (VALUE BASED)
     // =====================================================
+    
+
+    private void eliminateRedundantLoad(Body body, AssignStmt oldStmt, Local replacement) {
+        AssignStmt newStmt = Jimple.v().newAssignStmt(
+                oldStmt.getLeftOp(),
+                replacement);
+
+        body.getUnits().swapWith(oldStmt, newStmt);
+    }
+ 
+
     private void checkRedundantLoads(Body body,
             Map<Unit, State> IN,
             Map<Unit, State> OUT,
             BriefUnitGraph cfg) {
 
-        String key = body.getMethod()
-                .getDeclaringClass()
-                .getName()
-                + ":" +
+        String key = body.getMethod().getDeclaringClass().getName() + ":" +
                 body.getMethod().getName();
 
         List<String> results = new ArrayList<>();
+        List<Map.Entry<AssignStmt, Local>> rewrites = new ArrayList<>();
 
         for (Unit u : body.getUnits()) {
 
@@ -413,12 +423,9 @@ public class AnalysisTransformer extends BodyTransformer {
             Set<String> loaded = new HashSet<>();
 
             for (String obj : in.stack.get(base)) {
-
                 if (in.heap.containsKey(obj) &&
                         in.heap.get(obj).containsKey(field)) {
-
-                    loaded.addAll(
-                            in.heap.get(obj).get(field));
+                    loaded.addAll(in.heap.get(obj).get(field));
                 }
             }
 
@@ -440,11 +447,9 @@ public class AnalysisTransformer extends BodyTransformer {
                 if (pts.size() != 1 || !pts.contains(target))
                     continue;
 
-                // -------- MUST CHECK --------
                 boolean must = true;
 
                 for (Unit pred : cfg.getPredsOf(u)) {
-
                     State predOut = OUT.get(pred);
 
                     if (!predOut.stack.containsKey(l)) {
@@ -454,9 +459,7 @@ public class AnalysisTransformer extends BodyTransformer {
 
                     Set<String> predPts = predOut.stack.get(l);
 
-                    if (predPts.size() != 1 ||
-                            !predPts.contains(target)) {
-
+                    if (predPts.size() != 1 || !predPts.contains(target)) {
                         must = false;
                         break;
                     }
@@ -464,20 +467,23 @@ public class AnalysisTransformer extends BodyTransformer {
 
                 if (!must)
                     continue;
-                // ----------------------------
 
                 int line = u.getJavaSourceStartLineNumber();
+                results.add(line + ":" + stmt.getRightOp() + " " + l);
 
-                results.add(line + ":" +
-                        stmt.getRightOp() + " " + l);
-
+                rewrites.add(new AbstractMap.SimpleEntry<>(stmt, l));
                 break;
             }
+        }
+
+        for (Map.Entry<AssignStmt, Local> r : rewrites) {
+            eliminateRedundantLoad(body, r.getKey(), r.getValue());
         }
 
         if (!results.isEmpty())
             finalResults.put(key, results);
     }
+
 
     public static void printFinalResults() {
 

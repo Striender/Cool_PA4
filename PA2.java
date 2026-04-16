@@ -7,14 +7,17 @@ public class PA2 {
     public static void main(String[] args) {
 
         String classPath = "./testcases/" + args[0];  // do not change this, as evaluation would have testcases under this dir
+        String outPath = "./optimized/" + args[0];
+
 
         // Set up arguments for Soot
         String[] sootArgs = {
             "-cp", classPath,
-            "-pp", // sets the class path for Soot
-            "-f", "J",
+            "-pp",
+            "-f", "c",          // output .class files
+            "-d", outPath,      // where to write optimized binaries
             "-t", "1",
-            "-main-class", "Test", // specify the main class
+            "-main-class", "Test",
             "-process-dir", classPath
         };
 
