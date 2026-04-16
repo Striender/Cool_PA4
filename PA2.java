@@ -22,6 +22,11 @@ public class PA2 {
             "-process-dir", classPath
         };
 
+        // Add CFG Validator (runs first for baseline confidence)
+        CFGValidator cfgValidator = new CFGValidator();
+        PackManager.v().getPack("wjtp")
+                .add(new Transform("wjtp.cfg_validator", cfgValidator));
+
         // Create transformer for analysis
         AnalysisTransformer analysisTransformer = new AnalysisTransformer();
 

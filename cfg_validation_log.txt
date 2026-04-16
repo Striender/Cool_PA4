@@ -1,0 +1,17 @@
+SLF4J(W): No SLF4J providers were found.
+SLF4J(W): Defaulting to no-operation (NOP) logger implementation
+SLF4J(W): See https://www.slf4j.org/codes.html#noProviders for further details.
+Soot started on Thu Apr 16 23:36:40 IST 2026
+[CFG CHECK PASSED] Node.<init>
+[CFG CHECK PASSED] Test.<init>
+[CFG CHECK PASSED] Test.main
+
+========== REDUNDANT LOAD ELIMINATION ==========
+Test:main
+16:$r1.<Test: Test f> r4
+17:$r0.<Test: Test f> r4
+[DEAD FIELD] Node.f1 : Node
+[DEAD FIELD] Node.f2 : Node
+[DEAD FIELD] Node.g : Node
+Soot finished on Thu Apr 16 23:37:18 IST 2026
+Soot has run for 0 min. 38 sec.
