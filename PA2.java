@@ -29,6 +29,10 @@ public class PA2 {
         PackManager.v().getPack("wjtp")
                 .add(new Transform("wjtp.dfa", analysisTransformer));
 
+        DeadFieldAnalysis deadFieldAnalysis = new DeadFieldAnalysis();
+        PackManager.v().getPack("wjtp")
+                .add(new Transform("wjtp.dead_field", deadFieldAnalysis));
+
         // Set Soot options (Used to maintain line numbers from source code)
         Options.v().set_keep_line_number(true);
 

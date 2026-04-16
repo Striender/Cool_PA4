@@ -1,0 +1,11 @@
+PA2.java:26: error: cannot find symbol
+        AnalysisTransformer analysisTransformer = new AnalysisTransformer();
+        ^
+  symbol:   class AnalysisTransformer
+  location: class PA2
+PA2.java:26: error: cannot find symbol
+        AnalysisTransformer analysisTransformer = new AnalysisTransformer();
+                                                      ^
+  symbol:   class AnalysisTransformer
+  location: class PA2
+2 errors
