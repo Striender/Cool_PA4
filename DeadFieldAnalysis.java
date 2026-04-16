@@ -6,58 +6,66 @@ public class DeadFieldAnalysis extends SceneTransformer {
 
     @Override
     protected void internalTransform(String phaseName, Map<String, String> options) {
-        Set<SootField> allFields = new HashSet<>();
         Set<SootField> liveFields = new HashSet<>();
+        Set<SootField> allFieldRefs = new HashSet<>();
 
-        // Step 1: Collect all fields from application classes
-        for (SootClass sc : Scene.v().getApplicationClasses()) {
-            for (SootField sf : sc.getFields()) {
-                allFields.add(sf);
-            }
-        }
-
-        // Step 3 & 4: Traverse all methods to find field reads
+        // Traversal 1: Find all field reads (liveFields) and all field references (allFieldRefs)
         for (SootClass sc : Scene.v().getApplicationClasses()) {
             for (SootMethod sm : sc.getMethods()) {
-                if (!sm.isConcrete())
-                    continue;
-
+                if (!sm.isConcrete()) continue;
+                
                 Body body = sm.retrieveActiveBody();
                 for (Unit u : body.getUnits()) {
-                    // Check all use boxes for FieldRefs.
-                    // In Jimple, reading a field corresponds to the field appearing in a use box
-                    // (e.g., right-hand side of an AssignStmt, or used in an expression).
+                    // Check use boxes (Reads)
                     for (ValueBox useBox : u.getUseBoxes()) {
                         Value v = useBox.getValue();
                         if (v instanceof FieldRef) {
-                            liveFields.add(((FieldRef) v).getField());
+                            SootField f = ((FieldRef) v).getField();
+                            liveFields.add(f);
+                            allFieldRefs.add(f);
                         }
                     }
-
-                    // Note on Step 4:
-                    // If a field is written to (e.g. obj.f = 10), it appears in a def box,
-                    // not a use box. So we correctly only count field reads here.
+                    
+                    // Check def boxes (Writes)
+                    for (ValueBox defBox : u.getDefBoxes()) {
+                        Value v = defBox.getValue();
+                        if (v instanceof FieldRef) {
+                            SootField f = ((FieldRef) v).getField();
+                            allFieldRefs.add(f);
+                        }
+                    }
                 }
             }
         }
 
-        // Step 6: Identify Dead Fields
-        List<SootField> deadFields = new ArrayList<>();
-        for (SootField sf : allFields) {
-            if (!liveFields.contains(sf)) {
-                deadFields.add(sf);
+        // Traversal 2: Filter and removing dead fields cleanly
+        // Using List for deterministic output iteration first, then remove from actual class
+        List<SootField> removedFields = new ArrayList<>();
+
+        for (SootClass sc : Scene.v().getApplicationClasses()) {
+            // Need the iterator to safely remove from the chain
+            Iterator<SootField> it = sc.getFields().iterator();
+            while (it.hasNext()) {
+                SootField f = it.next();
+                
+                // Is the field never read?
+                if (!liveFields.contains(f)) {
+                    // Safety check: is it referenced anywhere else?
+                    if (!allFieldRefs.contains(f)) {
+                        it.remove();
+                        removedFields.add(f);
+                    }
+                }
             }
         }
 
-        // Keep output deterministic by sorting
-        deadFields.sort(Comparator
-                .comparing((SootField sf) -> sf.getDeclaringClass().getName())
-                .thenComparing(SootField::getName));
+        // Keep output deterministic by sorting class -> field
+        removedFields.sort(Comparator
+            .comparing((SootField sf) -> sf.getDeclaringClass().getName())
+            .thenComparing(SootField::getName));
 
-        for (SootField sf : deadFields) {
-            // Format: [DEAD FIELD] <ClassName>.<fieldName> : <Type>
-            System.out.println(
-                    "[DEAD FIELD] " + sf.getDeclaringClass().getName() + "." + sf.getName() + " : " + sf.getType());
+        for (SootField f : removedFields) {
+            System.out.println("[REMOVED DEAD FIELD] " + f.getDeclaringClass().getName() + "." + f.getName());
         }
     }
 }

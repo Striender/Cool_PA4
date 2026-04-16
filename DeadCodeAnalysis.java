@@ -124,6 +124,28 @@ public class DeadCodeAnalysis extends SceneTransformer {
         }
 
         // 5 & 6. Identify dead statements
+        List<Unit> toRemove = new ArrayList<>();
+        Set<Unit> branchTargets = new HashSet<>();
+        
+        for (Unit u : body.getUnits()) {
+            if (u instanceof IfStmt) branchTargets.add(((IfStmt) u).getTarget());
+            else if (u instanceof GotoStmt) branchTargets.add((Unit) ((GotoStmt) u).getTarget());
+            else if (u instanceof TableSwitchStmt) {
+                TableSwitchStmt sw = (TableSwitchStmt) u;
+                for (Unit t : sw.getTargets()) branchTargets.add(t);
+                branchTargets.add((Unit) sw.getDefaultTarget());
+            } else if (u instanceof LookupSwitchStmt) {
+                LookupSwitchStmt sw = (LookupSwitchStmt) u;
+                for (Unit t : sw.getTargets()) branchTargets.add(t);
+                branchTargets.add((Unit) sw.getDefaultTarget());
+            }
+        }
+        for (Trap t : body.getTraps()) {
+            branchTargets.add(t.getBeginUnit());
+            branchTargets.add(t.getEndUnit());
+            branchTargets.add(t.getHandlerUnit());
+        }
+
         for (Unit u : body.getUnits()) {
             boolean hasDef = !DEF.get(u).isEmpty();
             boolean isDead = false;
@@ -147,10 +169,16 @@ public class DeadCodeAnalysis extends SceneTransformer {
                 }
             }
 
-            // 7. Output
-            if (isDead) {
-                System.out.println("[DEAD CODE] " + method.getDeclaringClass().getName() + "." + method.getName() + " : " + u);
+            // Target branch check
+            if (isDead && !branchTargets.contains(u)) {
+                toRemove.add(u);
             }
+        }
+
+        // 7. Output and Remove
+        for (Unit u : toRemove) {
+            System.out.println("[REMOVED DEAD CODE] " + method.getDeclaringClass().getName() + "." + method.getName() + " : " + u);
+            body.getUnits().remove(u);
         }
     }
 }
