@@ -22,12 +22,26 @@ public class PA2 {
             "-process-dir", classPath
         };
 
+        // Add CFG Validator (runs first for baseline confidence)
+        CFGValidator cfgValidator = new CFGValidator();
+        PackManager.v().getPack("wjtp")
+                .add(new Transform("wjtp.cfg_validator", cfgValidator));
+
+        // Add Dead Code Analysis
+        DeadCodeAnalysis dca = new DeadCodeAnalysis();
+        PackManager.v().getPack("wjtp")
+                .add(new Transform("wjtp.dead_code_analysis", dca));
+
         // Create transformer for analysis
         AnalysisTransformer analysisTransformer = new AnalysisTransformer();
 
         // Add transformer to appropriate pack in PackManager; PackManager will run all packs when soot.Main.main is called
         PackManager.v().getPack("wjtp")
                 .add(new Transform("wjtp.dfa", analysisTransformer));
+
+        DeadFieldAnalysis deadFieldAnalysis = new DeadFieldAnalysis();
+        PackManager.v().getPack("wjtp")
+                .add(new Transform("wjtp.dead_field", deadFieldAnalysis));
 
         // Set Soot options (Used to maintain line numbers from source code)
         Options.v().set_keep_line_number(true);

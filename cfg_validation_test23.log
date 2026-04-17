@@ -1,0 +1,12 @@
+SLF4J(W): No SLF4J providers were found.
+SLF4J(W): Defaulting to no-operation (NOP) logger implementation
+SLF4J(W): See https://www.slf4j.org/codes.html#noProviders for further details.
+Soot started on Thu Apr 16 23:40:04 IST 2026
+[CFG CHECK PASSED] Test.<init>
+[CFG CHECK PASSED] Test.heavy
+[CFG CHECK PASSED] Test.buildList
+[CFG CHECK PASSED] Test.main
+[CFG CHECK PASSED] Test.<clinit>
+[CFG CHECK PASSED] Test$Node.<init>
+Soot finished on Thu Apr 16 23:40:42 IST 2026
+Soot has run for 0 min. 37 sec.
